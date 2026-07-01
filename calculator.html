@@ -17,9 +17,114 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #ffe9f4 0%, #fce4ec 50%, #f3e5f5 100%);
+      background: repeating-linear-gradient(
+        45deg,
+        #fff 0px,
+        #fff 20px,
+        #ffe4ec 20px,
+        #ffe4ec 40px
+      );
       font-family: 'Nunito', sans-serif;
       padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== Kawaii Background Decorations ===== */
+    .bg-deco {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-deco span {
+      position: absolute;
+      display: block;
+      animation: floatUp linear infinite;
+      opacity: 0.5;
+    }
+
+    /* Hearts */
+    .bg-deco .heart::before {
+      content: '♥';
+      font-size: inherit;
+      color: #e91e63;
+    }
+
+    /* Stars */
+    .bg-deco .star::before {
+      content: '✦';
+      font-size: inherit;
+      color: #ffd54f;
+    }
+
+    /* Sparkles */
+    .bg-deco .sparkle::before {
+      content: '✧';
+      font-size: inherit;
+      color: #ce93d8;
+    }
+
+    /* Clouds */
+    .bg-deco .cloud::before {
+      content: '☁';
+      font-size: inherit;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(255,255,255,0.6);
+    }
+
+    /* Rainbows */
+    .bg-deco .rainbow::before {
+      content: '🌈';
+      font-size: inherit;
+    }
+
+    /* Cats */
+    .bg-deco .cat::before {
+      content: '🐱';
+      font-size: inherit;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* Position each decor item */
+    .bg-deco span:nth-child(1)  { left: 5%;  font-size: 20px; animation-duration: 18s; animation-delay: 0s; }
+    .bg-deco span:nth-child(2)  { left: 15%; font-size: 14px; animation-duration: 22s; animation-delay: 2s; }
+    .bg-deco span:nth-child(3)  { left: 25%; font-size: 26px; animation-duration: 16s; animation-delay: 4s; }
+    .bg-deco span:nth-child(4)  { left: 35%; font-size: 18px; animation-duration: 20s; animation-delay: 1s; }
+    .bg-deco span:nth-child(5)  { left: 45%; font-size: 12px; animation-duration: 24s; animation-delay: 3s; }
+    .bg-deco span:nth-child(6)  { left: 55%; font-size: 22px; animation-duration: 19s; animation-delay: 5s; }
+    .bg-deco span:nth-child(7)  { left: 65%; font-size: 16px; animation-duration: 21s; animation-delay: 0s; }
+    .bg-deco span:nth-child(8)  { left: 75%; font-size: 24px; animation-duration: 15s; animation-delay: 3s; }
+    .bg-deco span:nth-child(9)  { left: 85%; font-size: 10px; animation-duration: 26s; animation-delay: 2s; }
+    .bg-deco span:nth-child(10) { left: 92%; font-size: 28px; animation-duration: 17s; animation-delay: 4s; }
+    .bg-deco span:nth-child(11) { left: 10%; font-size: 30px; animation-duration: 14s; animation-delay: 6s; }
+    .bg-deco span:nth-child(12) { left: 50%; font-size: 20px; animation-duration: 23s; animation-delay: 1s; }
+    .bg-deco span:nth-child(13) { left: 70%; font-size: 15px; animation-duration: 18s; animation-delay: 5s; }
+    .bg-deco span:nth-child(14) { left: 30%; font-size: 25px; animation-duration: 20s; animation-delay: 3s; }
+    .bg-deco span:nth-child(15) { left: 80%; font-size: 12px; animation-duration: 25s; animation-delay: 0s; }
+
+    /* Ensure calculator stays above background */
+    .calculator {
+      position: relative;
+      z-index: 1;
     }
 
     .calculator {
@@ -235,6 +340,24 @@
   </style>
 </head>
 <body>
+
+<div class="bg-deco" aria-hidden="true">
+  <span class="heart"></span>
+  <span class="star"></span>
+  <span class="sparkle"></span>
+  <span class="cloud"></span>
+  <span class="heart"></span>
+  <span class="rainbow"></span>
+  <span class="star"></span>
+  <span class="cat"></span>
+  <span class="sparkle"></span>
+  <span class="heart"></span>
+  <span class="cloud"></span>
+  <span class="star"></span>
+  <span class="heart"></span>
+  <span class="rainbow"></span>
+  <span class="sparkle"></span>
+</div>
 
 <div class="calculator" role="application" aria-label="Kawaii Calculator">
   <!-- Cute face -->
