@@ -1,586 +1,1185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kawaii Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: repeating-linear-gradient(
-        45deg,
-        #fff 0px,
-        #fff 20px,
-        #ffe4ec 20px,
-        #ffe4ec 40px
-      );
-      font-family: 'Nunito', sans-serif;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* ===== Kawaii Background Decorations ===== */
-    .bg-deco {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .bg-deco span {
-      position: absolute;
-      display: block;
-      animation: floatUp linear infinite;
-      opacity: 0.5;
-    }
-
-    /* Hearts */
-    .bg-deco .heart::before {
-      content: '♥';
-      font-size: inherit;
-      color: #e91e63;
-    }
-
-    /* Stars */
-    .bg-deco .star::before {
-      content: '✦';
-      font-size: inherit;
-      color: #ffd54f;
-    }
-
-    /* Sparkles */
-    .bg-deco .sparkle::before {
-      content: '✧';
-      font-size: inherit;
-      color: #ce93d8;
-    }
-
-    /* Clouds */
-    .bg-deco .cloud::before {
-      content: '☁';
-      font-size: inherit;
-      color: #fff;
-      text-shadow: 0 2px 10px rgba(255,255,255,0.6);
-    }
-
-    /* Rainbows */
-    .bg-deco .rainbow::before {
-      content: '🌈';
-      font-size: inherit;
-    }
-
-    /* Cats */
-    .bg-deco .cat::before {
-      content: '🐱';
-      font-size: inherit;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(100vh) rotate(0deg) scale(0.5);
-        opacity: 0;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kawaii Calculator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      10% {
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: repeating-linear-gradient(
+          45deg,
+          #fff 0px,
+          #fff 20px,
+          #ffe4ec 20px,
+          #ffe4ec 40px
+        );
+        font-family: "Nunito", sans-serif;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* ===== Layout wrapper ===== */
+      .container {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 780px;
+      }
+
+      /* ===== Percentage info box ===== */
+      .percent-box {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 24px 22px;
+        width: 100%;
+        max-width: 340px;
+        box-shadow:
+          0 20px 60px rgba(233, 30, 99, 0.15),
+          0 0 0 2px rgba(255, 255, 255, 0.6) inset;
+        font-family: "Nunito", sans-serif;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .percent-box:hover {
+        transform: translateY(-4px);
+      }
+
+      .percent-box .pb-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #e91e63;
+        text-align: center;
+        margin-bottom: 16px;
+        letter-spacing: 1px;
+      }
+
+      .percent-box .pb-title span {
+        display: inline-block;
+        animation: wiggle 1.5s ease-in-out infinite;
+      }
+
+      @keyframes wiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-8deg);
+        }
+        75% {
+          transform: rotate(8deg);
+        }
+      }
+
+      .percent-box .pb-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #4a148c;
+        background: rgba(252, 228, 236, 0.4);
+        min-height: 42px;
+        transition: all 0.3s ease;
+      }
+
+      .percent-box .pb-row .pb-icon {
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+        font-size: 18px;
+      }
+
+      .percent-box .pb-row .pb-label {
+        color: #9e9e9e;
+        font-weight: 400;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+
+      .percent-box .pb-row .pb-value {
+        margin-left: auto;
+        text-align: right;
+        word-break: break-all;
+      }
+
+      .percent-box .pb-row.active {
+        background: rgba(233, 30, 99, 0.12);
+        box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+      }
+
+      .percent-box .pb-row.empty {
+        justify-content: center;
+        color: #ce93d8;
+        font-weight: 400;
+        font-size: 14px;
+        background: transparent;
+      }
+
+      .percent-box .pb-row .pb-eq {
+        color: #e91e63;
+        font-weight: 800;
+      }
+
+      /* ===== Standalone percent inputs ===== */
+      .percent-inputs {
+        background: rgba(252, 228, 236, 0.3);
+        border-radius: 20px;
+        padding: 18px 16px;
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .percent-inputs .pi-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #ab47bc;
+        text-align: center;
+        letter-spacing: 0.5px;
+      }
+
+      .percent-inputs .pi-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .percent-inputs .pi-row .pi-icon {
+        font-size: 18px;
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .percent-inputs .pi-row input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 2px solid #f8bbd0;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: "Nunito", sans-serif;
+        color: #4a148c;
+        background: rgba(255, 255, 255, 0.7);
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      .percent-inputs .pi-row input::-webkit-outer-spin-button,
+      .percent-inputs .pi-row input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      .percent-inputs .pi-row input:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.12);
+      }
+
+      .percent-inputs .pi-row input::placeholder {
+        color: #ce93d8;
+        font-weight: 400;
+      }
+
+      .percent-inputs .pi-btn {
+        padding: 12px 16px;
+        border: none;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 800;
+        font-family: "Nunito", sans-serif;
+        cursor: pointer;
+        background: linear-gradient(135deg, #e91e63, #ab47bc);
+        color: #fff;
+        box-shadow: 0 4px 0 #8e24aa;
+        transition: all 0.12s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        width: 100%;
+        margin-top: 2px;
+      }
+
+      .percent-inputs .pi-btn:hover {
+        background: linear-gradient(135deg, #d81b60, #9c27b0);
+      }
+
+      .percent-inputs .pi-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 1px 0 #8e24aa;
+      }
+
+      .percent-inputs .pi-result {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 800;
+        color: #4a148c;
+        padding: 10px;
+        min-height: 44px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .percent-inputs .pi-result .pi-eq {
+        color: #e91e63;
+        font-size: 18px;
+      }
+
+      /* ===== Kawaii Background Decorations ===== */
+      .bg-deco {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .bg-deco span {
+        position: absolute;
+        display: block;
+        animation: floatUp linear infinite;
         opacity: 0.5;
       }
-      90% {
-        opacity: 0.4;
+
+      /* Hearts */
+      .bg-deco .heart::before {
+        content: "♥";
+        font-size: inherit;
+        color: #e91e63;
       }
-      100% {
-        transform: translateY(-10vh) rotate(360deg) scale(1.2);
-        opacity: 0;
+
+      /* Stars */
+      .bg-deco .star::before {
+        content: "✦";
+        font-size: inherit;
+        color: #ffd54f;
       }
-    }
 
-    /* Position each decor item */
-    .bg-deco span:nth-child(1)  { left: 5%;  font-size: 20px; animation-duration: 18s; animation-delay: 0s; }
-    .bg-deco span:nth-child(2)  { left: 15%; font-size: 14px; animation-duration: 22s; animation-delay: 2s; }
-    .bg-deco span:nth-child(3)  { left: 25%; font-size: 26px; animation-duration: 16s; animation-delay: 4s; }
-    .bg-deco span:nth-child(4)  { left: 35%; font-size: 18px; animation-duration: 20s; animation-delay: 1s; }
-    .bg-deco span:nth-child(5)  { left: 45%; font-size: 12px; animation-duration: 24s; animation-delay: 3s; }
-    .bg-deco span:nth-child(6)  { left: 55%; font-size: 22px; animation-duration: 19s; animation-delay: 5s; }
-    .bg-deco span:nth-child(7)  { left: 65%; font-size: 16px; animation-duration: 21s; animation-delay: 0s; }
-    .bg-deco span:nth-child(8)  { left: 75%; font-size: 24px; animation-duration: 15s; animation-delay: 3s; }
-    .bg-deco span:nth-child(9)  { left: 85%; font-size: 10px; animation-duration: 26s; animation-delay: 2s; }
-    .bg-deco span:nth-child(10) { left: 92%; font-size: 28px; animation-duration: 17s; animation-delay: 4s; }
-    .bg-deco span:nth-child(11) { left: 10%; font-size: 30px; animation-duration: 14s; animation-delay: 6s; }
-    .bg-deco span:nth-child(12) { left: 50%; font-size: 20px; animation-duration: 23s; animation-delay: 1s; }
-    .bg-deco span:nth-child(13) { left: 70%; font-size: 15px; animation-duration: 18s; animation-delay: 5s; }
-    .bg-deco span:nth-child(14) { left: 30%; font-size: 25px; animation-duration: 20s; animation-delay: 3s; }
-    .bg-deco span:nth-child(15) { left: 80%; font-size: 12px; animation-duration: 25s; animation-delay: 0s; }
+      /* Sparkles */
+      .bg-deco .sparkle::before {
+        content: "✧";
+        font-size: inherit;
+        color: #ce93d8;
+      }
 
-    /* Ensure calculator stays above background */
-    .calculator {
-      position: relative;
-      z-index: 1;
-    }
+      /* Clouds */
+      .bg-deco .cloud::before {
+        content: "☁";
+        font-size: inherit;
+        color: #fff;
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+      }
 
-    .calculator {
-      width: 100%;
-      max-width: 380px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
-      border-radius: 40px;
-      padding: 30px 25px 35px;
-      box-shadow:
-        0 20px 60px rgba(233, 30, 99, 0.15),
-        0 0 0 2px rgba(255, 255, 255, 0.6) inset,
-        0 0 30px rgba(255, 182, 193, 0.3);
-      transition: transform 0.3s ease;
-    }
+      /* Rainbows */
+      .bg-deco .rainbow::before {
+        content: "🌈";
+        font-size: inherit;
+      }
 
-    .calculator:hover {
-      transform: translateY(-4px);
-    }
+      /* Cats */
+      .bg-deco .cat::before {
+        content: "🐱";
+        font-size: inherit;
+      }
 
-    /* Decorative face */
-    .face {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      margin-bottom: 12px;
-    }
+      /* More kawaii cartoons */
+      .bg-deco .bunny::before {
+        content: "🐰";
+        font-size: inherit;
+      }
+      .bg-deco .bear::before {
+        content: "🧸";
+        font-size: inherit;
+      }
+      .bg-deco .panda::before {
+        content: "🐼";
+        font-size: inherit;
+      }
+      .bg-deco .cake::before {
+        content: "🍰";
+        font-size: inherit;
+      }
+      .bg-deco .candy::before {
+        content: "🍬";
+        font-size: inherit;
+      }
+      .bg-deco .flower::before {
+        content: "🌸";
+        font-size: inherit;
+      }
+      .bg-deco .unicorn::before {
+        content: "🦄";
+        font-size: inherit;
+      }
+      .bg-deco .butterfly::before {
+        content: "🦋";
+        font-size: inherit;
+      }
+      .bg-deco .cookie::before {
+        content: "🍪";
+        font-size: inherit;
+      }
+      .bg-deco .bow::before {
+        content: "🎀";
+        font-size: inherit;
+      }
+      .bg-deco .moon::before {
+        content: "🌙";
+        font-size: inherit;
+      }
+      .bg-deco .gem::before {
+        content: "💎";
+        font-size: inherit;
+      }
+      .bg-deco .ribbon::before {
+        content: "🎀";
+        font-size: inherit;
+      }
 
-    .face .eye {
-      width: 10px;
-      height: 14px;
-      background: #e91e63;
-      border-radius: 50%;
-      animation: blink 3.5s infinite;
-    }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(100vh) rotate(0deg) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.5;
+        }
+        90% {
+          opacity: 0.4;
+        }
+        100% {
+          transform: translateY(-10vh) rotate(360deg) scale(1.2);
+          opacity: 0;
+        }
+      }
 
-    @keyframes blink {
-      0%, 90%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(0.1); }
-    }
+      /* Position each decor item */
+      .bg-deco span:nth-child(1) {
+        left: 5%;
+        font-size: 20px;
+        animation-duration: 18s;
+        animation-delay: 0s;
+      }
+      .bg-deco span:nth-child(2) {
+        left: 15%;
+        font-size: 14px;
+        animation-duration: 22s;
+        animation-delay: 2s;
+      }
+      .bg-deco span:nth-child(3) {
+        left: 25%;
+        font-size: 26px;
+        animation-duration: 16s;
+        animation-delay: 4s;
+      }
+      .bg-deco span:nth-child(4) {
+        left: 35%;
+        font-size: 18px;
+        animation-duration: 20s;
+        animation-delay: 1s;
+      }
+      .bg-deco span:nth-child(5) {
+        left: 45%;
+        font-size: 12px;
+        animation-duration: 24s;
+        animation-delay: 3s;
+      }
+      .bg-deco span:nth-child(6) {
+        left: 55%;
+        font-size: 22px;
+        animation-duration: 19s;
+        animation-delay: 5s;
+      }
+      .bg-deco span:nth-child(7) {
+        left: 65%;
+        font-size: 16px;
+        animation-duration: 21s;
+        animation-delay: 0s;
+      }
+      .bg-deco span:nth-child(8) {
+        left: 75%;
+        font-size: 24px;
+        animation-duration: 15s;
+        animation-delay: 3s;
+      }
+      .bg-deco span:nth-child(9) {
+        left: 85%;
+        font-size: 10px;
+        animation-duration: 26s;
+        animation-delay: 2s;
+      }
+      .bg-deco span:nth-child(10) {
+        left: 92%;
+        font-size: 28px;
+        animation-duration: 17s;
+        animation-delay: 4s;
+      }
+      .bg-deco span:nth-child(11) {
+        left: 10%;
+        font-size: 30px;
+        animation-duration: 14s;
+        animation-delay: 6s;
+      }
+      .bg-deco span:nth-child(12) {
+        left: 50%;
+        font-size: 20px;
+        animation-duration: 23s;
+        animation-delay: 1s;
+      }
+      .bg-deco span:nth-child(13) {
+        left: 70%;
+        font-size: 15px;
+        animation-duration: 18s;
+        animation-delay: 5s;
+      }
+      .bg-deco span:nth-child(14) {
+        left: 30%;
+        font-size: 25px;
+        animation-duration: 20s;
+        animation-delay: 3s;
+      }
+      .bg-deco span:nth-child(15) {
+        left: 80%;
+        font-size: 12px;
+        animation-duration: 25s;
+        animation-delay: 0s;
+      }
+      .bg-deco span:nth-child(16) {
+        left: 3%;
+        font-size: 32px;
+        animation-duration: 16s;
+        animation-delay: 2s;
+      }
+      .bg-deco span:nth-child(17) {
+        left: 42%;
+        font-size: 18px;
+        animation-duration: 22s;
+        animation-delay: 7s;
+      }
+      .bg-deco span:nth-child(18) {
+        left: 60%;
+        font-size: 26px;
+        animation-duration: 14s;
+        animation-delay: 3s;
+      }
+      .bg-deco span:nth-child(19) {
+        left: 20%;
+        font-size: 22px;
+        animation-duration: 19s;
+        animation-delay: 8s;
+      }
+      .bg-deco span:nth-child(20) {
+        left: 88%;
+        font-size: 16px;
+        animation-duration: 21s;
+        animation-delay: 1s;
+      }
+      .bg-deco span:nth-child(21) {
+        left: 48%;
+        font-size: 28px;
+        animation-duration: 17s;
+        animation-delay: 5s;
+      }
+      .bg-deco span:nth-child(22) {
+        left: 72%;
+        font-size: 14px;
+        animation-duration: 24s;
+        animation-delay: 6s;
+      }
+      .bg-deco span:nth-child(23) {
+        left: 12%;
+        font-size: 24px;
+        animation-duration: 15s;
+        animation-delay: 9s;
+      }
+      .bg-deco span:nth-child(24) {
+        left: 95%;
+        font-size: 20px;
+        animation-duration: 20s;
+        animation-delay: 4s;
+      }
+      .bg-deco span:nth-child(25) {
+        left: 33%;
+        font-size: 30px;
+        animation-duration: 13s;
+        animation-delay: 2s;
+      }
 
-    .face .mouth {
-      width: 20px;
-      height: 10px;
-      border-bottom: 3px solid #e91e63;
-      border-radius: 0 0 20px 20px;
-      margin-top: -2px;
-    }
-
-    /* Display */
-    .display {
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 24px;
-      padding: 20px 24px;
-      margin-bottom: 20px;
-      min-height: 100px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-end;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.08) inset;
-    }
-
-    .display .expression {
-      font-size: 18px;
-      color: #9e9e9e;
-      min-height: 26px;
-      word-break: break-all;
-      text-align: right;
-      width: 100%;
-    }
-
-    .display .result {
-      font-size: 42px;
-      font-weight: 800;
-      color: #4a148c;
-      word-break: break-all;
-      text-align: right;
-      width: 100%;
-      line-height: 1.2;
-      transition: font-size 0.15s ease;
-    }
-
-    .display .result.small {
-      font-size: 28px;
-    }
-
-    /* Buttons grid */
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .btn {
-      padding: 18px 8px;
-      font-size: 24px;
-      font-weight: 700;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      font-family: 'Nunito', sans-serif;
-      transition: all 0.12s ease;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn:active {
-      transform: scale(0.92);
-    }
-
-    /* Number buttons */
-    .btn.number {
-      background: #fce4ec;
-      color: #6a1b9a;
-      box-shadow: 0 4px 0 #f8bbd0;
-    }
-
-    .btn.number:hover {
-      background: #f8bbd0;
-    }
-
-    .btn.number:active {
-      box-shadow: 0 1px 0 #f8bbd0;
-    }
-
-    /* Operator buttons */
-    .btn.operator {
-      background: #e1bee7;
-      color: #4a148c;
-      box-shadow: 0 4px 0 #ce93d8;
-    }
-
-    .btn.operator:hover {
-      background: #ce93d8;
-    }
-
-    .btn.operator:active {
-      box-shadow: 0 1px 0 #ce93d8;
-    }
-
-    /* Special buttons */
-    .btn.special {
-      background: #f3e5f5;
-      color: #7b1fa2;
-      box-shadow: 0 4px 0 #e1bee7;
-    }
-
-    .btn.special:hover {
-      background: #e1bee7;
-    }
-
-    .btn.special:active {
-      box-shadow: 0 1px 0 #e1bee7;
-    }
-
-    /* Equals button - spans 2 cols */
-    .btn.equals {
-      grid-column: span 2;
-      background: linear-gradient(135deg, #e91e63, #ab47bc);
-      color: #fff;
-      box-shadow: 0 4px 0 #8e24aa;
-      font-size: 28px;
-    }
-
-    .btn.equals:hover {
-      background: linear-gradient(135deg, #d81b60, #9c27b0);
-    }
-
-    .btn.equals:active {
-      box-shadow: 0 1px 0 #8e24aa;
-    }
-
-    /* Ripple effect (kawaii sparkle) */
-    .btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.5) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .btn:hover::after {
-      opacity: 1;
-    }
-
-    /* Responsive */
-    @media (max-width: 420px) {
-      body { padding: 10px; }
+      /* Ensure calculator stays above background */
       .calculator {
-        padding: 20px 16px 25px;
-        border-radius: 30px;
+        position: relative;
+        z-index: 1;
       }
-      .btn { padding: 15px 6px; font-size: 20px; border-radius: 16px; }
-      .display .result { font-size: 34px; }
-      .display .result.small { font-size: 22px; }
-      .buttons { gap: 10px; }
-      .display { padding: 14px 18px; min-height: 80px; }
-    }
 
-    @media (max-width: 360px) {
-      .btn { padding: 12px 4px; font-size: 18px; }
-      .display .result { font-size: 28px; }
-      .display .result.small { font-size: 20px; }
-      .buttons { gap: 8px; }
-    }
-  </style>
-</head>
-<body>
+      .calculator {
+        width: 100%;
+        max-width: 380px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 40px;
+        padding: 30px 25px 35px;
+        box-shadow:
+          0 20px 60px rgba(233, 30, 99, 0.15),
+          0 0 0 2px rgba(255, 255, 255, 0.6) inset,
+          0 0 30px rgba(255, 182, 193, 0.3);
+        transition: transform 0.3s ease;
+      }
 
-<div class="bg-deco" aria-hidden="true">
-  <span class="heart"></span>
-  <span class="star"></span>
-  <span class="sparkle"></span>
-  <span class="cloud"></span>
-  <span class="heart"></span>
-  <span class="rainbow"></span>
-  <span class="star"></span>
-  <span class="cat"></span>
-  <span class="sparkle"></span>
-  <span class="heart"></span>
-  <span class="cloud"></span>
-  <span class="star"></span>
-  <span class="heart"></span>
-  <span class="rainbow"></span>
-  <span class="sparkle"></span>
-</div>
+      .calculator:hover {
+        transform: translateY(-4px);
+      }
 
-<div class="calculator" role="application" aria-label="Kawaii Calculator">
-  <!-- Cute face -->
-  <div class="face" aria-hidden="true">
-    <div class="eye"></div>
-    <div class="mouth"></div>
-    <div class="eye"></div>
-  </div>
+      /* Decorative face */
+      .face {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 12px;
+      }
 
-  <!-- Display -->
-  <div class="display">
-    <div class="expression" id="expression"></div>
-    <div class="result" id="result">0</div>
-  </div>
+      .face .eye {
+        width: 10px;
+        height: 14px;
+        background: #e91e63;
+        border-radius: 50%;
+        animation: blink 3.5s infinite;
+      }
 
-  <!-- Buttons -->
-  <div class="buttons">
-    <button class="btn special" data-action="clear">AC</button>
-    <button class="btn special" data-action="negate">+/-</button>
-    <button class="btn special" data-action="percent">%</button>
-    <button class="btn operator" data-action="divide">÷</button>
+      @keyframes blink {
+        0%,
+        90%,
+        100% {
+          transform: scaleY(1);
+        }
+        95% {
+          transform: scaleY(0.1);
+        }
+      }
 
-    <button class="btn number" data-value="7">7</button>
-    <button class="btn number" data-value="8">8</button>
-    <button class="btn number" data-value="9">9</button>
-    <button class="btn operator" data-action="multiply">x</button>
+      .face .mouth {
+        width: 20px;
+        height: 10px;
+        border-bottom: 3px solid #e91e63;
+        border-radius: 0 0 20px 20px;
+        margin-top: -2px;
+      }
 
-    <button class="btn number" data-value="4">4</button>
-    <button class="btn number" data-value="5">5</button>
-    <button class="btn number" data-value="6">6</button>
-    <button class="btn operator" data-action="subtract">-</button>
+      /* Display */
+      .display {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(233, 30, 99, 0.08) inset;
+      }
 
-    <button class="btn number" data-value="1">1</button>
-    <button class="btn number" data-value="2">2</button>
-    <button class="btn number" data-value="3">3</button>
-    <button class="btn operator" data-action="add">+</button>
+      .display .expression {
+        font-size: 18px;
+        color: #9e9e9e;
+        min-height: 26px;
+        word-break: break-all;
+        text-align: right;
+        width: 100%;
+      }
 
-    <button class="btn number" data-value="0">0</button>
-    <button class="btn number" data-value=".">.</button>
-    <button class="btn equals" data-action="calculate">=</button>
-  </div>
-</div>
+      .display .result {
+        font-size: 42px;
+        font-weight: 800;
+        color: #4a148c;
+        word-break: break-all;
+        text-align: right;
+        width: 100%;
+        line-height: 1.2;
+        transition: font-size 0.15s ease;
+      }
 
-<script>
-  const resultEl = document.getElementById('result');
-  const expressionEl = document.getElementById('expression');
-  const buttons = document.querySelectorAll('.btn');
+      .display .result.small {
+        font-size: 28px;
+      }
 
-  let currentInput = '0';
-  let previousInput = '';
-  let operator = null;
-  let shouldResetInput = false;
+      /* Buttons grid */
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
 
-  function formatDisplay(value) {
-    const str = String(value);
-    if (str.length > 14) {
-      resultEl.classList.add('small');
-    } else {
-      resultEl.classList.remove('small');
-    }
-    return str;
-  }
+      .btn {
+        padding: 18px 8px;
+        font-size: 24px;
+        font-weight: 700;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: "Nunito", sans-serif;
+        transition: all 0.12s ease;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
 
-  function updateDisplay() {
-    resultEl.textContent = formatDisplay(currentInput);
-  }
+      .btn:active {
+        transform: scale(0.92);
+      }
 
-  function updateExpression() {
-    if (operator && previousInput) {
-      const opMap = { add: '+', subtract: '-', multiply: 'x', divide: '÷' };
-      expressionEl.textContent = `${previousInput} ${opMap[operator]}`;
-    } else {
-      expressionEl.textContent = '';
-    }
-  }
+      /* Number buttons */
+      .btn.number {
+        background: #fce4ec;
+        color: #6a1b9a;
+        box-shadow: 0 4px 0 #f8bbd0;
+      }
 
-  function inputNumber(value) {
-    if (shouldResetInput) {
-      currentInput = '';
-      shouldResetInput = false;
-    }
-    if (value === '.' && currentInput.includes('.')) return;
-    if (currentInput === '0' && value !== '.') {
-      currentInput = value;
-    } else {
-      currentInput += value;
-    }
-    updateDisplay();
-    updateExpression();
-  }
+      .btn.number:hover {
+        background: #f8bbd0;
+      }
 
-  function inputOperator(op) {
-    if (operator && !shouldResetInput) {
-      calculate();
-    }
-    previousInput = currentInput;
-    operator = op;
-    shouldResetInput = true;
-    updateExpression();
-  }
+      .btn.number:active {
+        box-shadow: 0 1px 0 #f8bbd0;
+      }
 
-  function calculate() {
-    if (!operator || !previousInput) return;
+      /* Operator buttons */
+      .btn.operator {
+        background: #e1bee7;
+        color: #4a148c;
+        box-shadow: 0 4px 0 #ce93d8;
+      }
 
-    const prev = parseFloat(previousInput);
-    const curr = parseFloat(currentInput);
-    if (isNaN(prev) || isNaN(curr)) return;
+      .btn.operator:hover {
+        background: #ce93d8;
+      }
 
-    let result;
-    switch (operator) {
-      case 'add': result = prev + curr; break;
-      case 'subtract': result = prev - curr; break;
-      case 'multiply': result = prev * curr; break;
-      case 'divide':
-        if (curr === 0) {
-          resultEl.textContent = 'oh nyo! 💔';
+      .btn.operator:active {
+        box-shadow: 0 1px 0 #ce93d8;
+      }
+
+      /* Special buttons */
+      .btn.special {
+        background: #f3e5f5;
+        color: #7b1fa2;
+        box-shadow: 0 4px 0 #e1bee7;
+      }
+
+      .btn.special:hover {
+        background: #e1bee7;
+      }
+
+      .btn.special:active {
+        box-shadow: 0 1px 0 #e1bee7;
+      }
+
+      /* Equals button - spans 2 cols */
+      .btn.equals {
+        grid-column: span 2;
+        background: linear-gradient(135deg, #e91e63, #ab47bc);
+        color: #fff;
+        box-shadow: 0 4px 0 #8e24aa;
+        font-size: 28px;
+      }
+
+      .btn.equals:hover {
+        background: linear-gradient(135deg, #d81b60, #9c27b0);
+      }
+
+      .btn.equals:active {
+        box-shadow: 0 1px 0 #8e24aa;
+      }
+
+      /* Ripple effect (kawaii sparkle) */
+      .btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        background: radial-gradient(
+          circle at var(--x, 50%) var(--y, 50%),
+          rgba(255, 255, 255, 0.5) 0%,
+          transparent 60%
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+
+      .btn:hover::after {
+        opacity: 1;
+      }
+
+      /* Responsive */
+      @media (max-width: 420px) {
+        body {
+          padding: 10px;
+        }
+        .calculator {
+          padding: 20px 16px 25px;
+          border-radius: 30px;
+        }
+        .btn {
+          padding: 15px 6px;
+          font-size: 20px;
+          border-radius: 16px;
+        }
+        .display .result {
+          font-size: 34px;
+        }
+        .display .result.small {
+          font-size: 22px;
+        }
+        .buttons {
+          gap: 10px;
+        }
+        .display {
+          padding: 14px 18px;
+          min-height: 80px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .btn {
+          padding: 12px 4px;
+          font-size: 18px;
+        }
+        .display .result {
+          font-size: 28px;
+        }
+        .display .result.small {
+          font-size: 20px;
+        }
+        .buttons {
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-deco" aria-hidden="true">
+      <span class="heart"></span>
+      <span class="star"></span>
+      <span class="sparkle"></span>
+      <span class="cloud"></span>
+      <span class="heart"></span>
+      <span class="rainbow"></span>
+      <span class="star"></span>
+      <span class="cat"></span>
+      <span class="sparkle"></span>
+      <span class="heart"></span>
+      <span class="cloud"></span>
+      <span class="star"></span>
+      <span class="heart"></span>
+      <span class="rainbow"></span>
+      <span class="sparkle"></span>
+      <span class="bunny"></span>
+      <span class="bear"></span>
+      <span class="panda"></span>
+      <span class="cake"></span>
+      <span class="candy"></span>
+      <span class="flower"></span>
+      <span class="unicorn"></span>
+      <span class="butterfly"></span>
+      <span class="cookie"></span>
+      <span class="bow"></span>
+    </div>
+
+    <div class="container">
+      <div class="calculator" role="application" aria-label="Kawaii Calculator">
+        <!-- Cute face -->
+        <div class="face" aria-hidden="true">
+          <div class="eye"></div>
+          <div class="mouth"></div>
+          <div class="eye"></div>
+        </div>
+
+        <!-- Display -->
+        <div class="display">
+          <div class="expression" id="expression"></div>
+          <div class="result" id="result">0</div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="buttons">
+          <button class="btn special" data-action="clear">AC</button>
+          <button class="btn special" data-action="negate">+/-</button>
+          <button class="btn special" data-action="percent">%</button>
+          <button class="btn operator" data-action="divide">÷</button>
+
+          <button class="btn number" data-value="7">7</button>
+          <button class="btn number" data-value="8">8</button>
+          <button class="btn number" data-value="9">9</button>
+          <button class="btn operator" data-action="multiply">x</button>
+
+          <button class="btn number" data-value="4">4</button>
+          <button class="btn number" data-value="5">5</button>
+          <button class="btn number" data-value="6">6</button>
+          <button class="btn operator" data-action="subtract">-</button>
+
+          <button class="btn number" data-value="1">1</button>
+          <button class="btn number" data-value="2">2</button>
+          <button class="btn number" data-value="3">3</button>
+          <button class="btn operator" data-action="add">+</button>
+
+          <button class="btn number" data-value="0">0</button>
+          <button class="btn number" data-value=".">.</button>
+          <button class="btn equals" data-action="calculate">=</button>
+        </div>
+      </div>
+
+      <!-- Percent info box -->
+      <div class="percent-box" id="percentBox">
+        <div class="pb-title"><span>🎀</span> % breakdown <span>🎀</span></div>
+
+        <div class="pb-row empty" id="pbEmpty">press % with an operator ✨</div>
+
+        <div class="pb-row" id="pbRow1" style="display: none">
+          <span class="pb-icon">📥</span>
+          <span class="pb-label">input</span>
+          <span class="pb-value" id="pbInput"></span>
+        </div>
+        <div class="pb-row" id="pbRow2" style="display: none">
+          <span class="pb-icon">🧮</span>
+          <span class="pb-label">calc</span>
+          <span class="pb-value" id="pbCalc"></span>
+        </div>
+        <div class="pb-row active" id="pbRow3" style="display: none">
+          <span class="pb-icon">🎯</span>
+          <span class="pb-label">result</span>
+          <span class="pb-value" id="pbResult"></span>
+        </div>
+
+        <div class="percent-inputs">
+          <div class="pi-label">✧ quick % calc ✧</div>
+          <div class="pi-row">
+            <span class="pi-icon">💜</span>
+            <input type="number" id="percentInput" placeholder="percentage" />
+          </div>
+          <div class="pi-row">
+            <span class="pi-icon">💗</span>
+            <input type="number" id="valueInput" placeholder="value" />
+          </div>
+          <button class="pi-btn" onclick="calculatePercent()">Calculate</button>
+          <div class="pi-result" id="percentResult">
+            <span class="pi-eq">🌸</span> 0
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const resultEl = document.getElementById("result");
+      const expressionEl = document.getElementById("expression");
+      const buttons = document.querySelectorAll(".btn");
+
+      // Percent box elements
+      const pbEmpty = document.getElementById("pbEmpty");
+      const pbRow1 = document.getElementById("pbRow1");
+      const pbRow2 = document.getElementById("pbRow2");
+      const pbRow3 = document.getElementById("pbRow3");
+      const pbInput = document.getElementById("pbInput");
+      const pbCalc = document.getElementById("pbCalc");
+      const pbResult = document.getElementById("pbResult");
+
+      let currentInput = "0";
+      let previousInput = "";
+      let operator = null;
+      let shouldResetInput = false;
+
+      const opSymbol = { add: "+", subtract: "-", multiply: "x", divide: "÷" };
+
+      function calculatePercent() {
+        const percent = parseFloat(
+          document.getElementById("percentInput").value,
+        );
+        const value = parseFloat(document.getElementById("valueInput").value);
+        const el = document.getElementById("percentResult");
+
+        if (isNaN(percent) || isNaN(value)) {
+          el.innerHTML = '<span class="pi-eq">💔</span> oh no!';
+          return;
+        }
+
+        const result = (percent / 100) * value;
+        el.innerHTML =
+          '<span class="pi-eq">🎯</span> ' +
+          percent +
+          "% of " +
+          value +
+          " = " +
+          parseFloat(result.toFixed(4));
+      }
+
+      function clearPercentBox() {
+        pbEmpty.style.display = "flex";
+        pbRow1.style.display = "none";
+        pbRow2.style.display = "none";
+        pbRow3.style.display = "none";
+      }
+
+      function showPercentBox(inputStr, calcStr, resultStr) {
+        pbEmpty.style.display = "none";
+        pbRow1.style.display = "flex";
+        pbRow2.style.display = "flex";
+        pbRow3.style.display = "flex";
+        pbInput.textContent = inputStr;
+        pbCalc.textContent = calcStr;
+        pbResult.textContent = resultStr;
+      }
+
+      function formatDisplay(value) {
+        const str = String(value);
+        if (str.length > 14) {
+          resultEl.classList.add("small");
+        } else {
+          resultEl.classList.remove("small");
+        }
+        return str;
+      }
+
+      function updateDisplay() {
+        resultEl.textContent = formatDisplay(currentInput);
+      }
+
+      function updateExpression() {
+        if (operator && previousInput) {
+          const opMap = { add: "+", subtract: "-", multiply: "x", divide: "÷" };
+          expressionEl.textContent = `${previousInput} ${opMap[operator]}`;
+        } else {
+          expressionEl.textContent = "";
+        }
+      }
+
+      function inputNumber(value) {
+        if (shouldResetInput) {
+          currentInput = "";
+          shouldResetInput = false;
+        }
+        if (value === "." && currentInput.includes(".")) return;
+        if (currentInput === "0" && value !== ".") {
+          currentInput = value;
+        } else {
+          currentInput += value;
+        }
+        updateDisplay();
+        updateExpression();
+      }
+
+      function inputOperator(op) {
+        if (operator && !shouldResetInput) {
+          calculate();
+        }
+        previousInput = currentInput;
+        operator = op;
+        shouldResetInput = true;
+        updateExpression();
+      }
+
+      function calculate() {
+        if (!operator || !previousInput) return;
+
+        const prev = parseFloat(previousInput);
+        const curr = parseFloat(currentInput);
+        if (isNaN(prev) || isNaN(curr)) return;
+
+        let result;
+        switch (operator) {
+          case "add":
+            result = prev + curr;
+            break;
+          case "subtract":
+            result = prev - curr;
+            break;
+          case "multiply":
+            result = prev * curr;
+            break;
+          case "divide":
+            if (curr === 0) {
+              resultEl.textContent = "oh nyo! 💔";
+              reset();
+              return;
+            }
+            result = prev / curr;
+            break;
+          default:
+            return;
+        }
+
+        if (!isFinite(result)) {
+          resultEl.textContent = "oh nyo! 💔";
           reset();
           return;
         }
-        result = prev / curr;
-        break;
-      default: return;
-    }
 
-    if (!isFinite(result)) {
-      resultEl.textContent = 'oh nyo! 💔';
-      reset();
-      return;
-    }
-
-    currentInput = String(parseFloat(result.toFixed(10)));
-    operator = null;
-    previousInput = '';
-    shouldResetInput = true;
-    expressionEl.textContent = '';
-    updateDisplay();
-  }
-
-  function reset() {
-    currentInput = '0';
-    previousInput = '';
-    operator = null;
-    shouldResetInput = false;
-    expressionEl.textContent = '';
-    updateDisplay();
-  }
-
-  function negate() {
-    if (currentInput !== '0') {
-      currentInput = currentInput.startsWith('-') ? currentInput.slice(1) : '-' + currentInput;
-      updateDisplay();
-    }
-  }
-
-  function percent() {
-    const num = parseFloat(currentInput);
-    if (!isNaN(num)) {
-      currentInput = String(num / 100);
-      updateDisplay();
-    }
-  }
-
-  function handleButtonClick(e) {
-    const btn = e.currentTarget;
-    const value = btn.dataset.value;
-    const action = btn.dataset.action;
-
-    // Sparkle effect
-    const rect = btn.getBoundingClientRect();
-    const x = ((e.clientX || e.touches?.[0]?.clientX || rect.left + rect.width / 2) - rect.left) / rect.width * 100;
-    const y = ((e.clientY || e.touches?.[0]?.clientY || rect.top + rect.height / 2) - rect.top) / rect.height * 100;
-    btn.style.setProperty('--x', x + '%');
-    btn.style.setProperty('--y', y + '%');
-
-    if (value) {
-      inputNumber(value);
-    } else if (action === 'clear') {
-      reset();
-    } else if (action === 'negate') {
-      negate();
-    } else if (action === 'percent') {
-      percent();
-    } else if (action === 'calculate') {
-      calculate();
-    } else if (action) {
-      inputOperator(action);
-    }
-  }
-
-  // Keyboard support
-  document.addEventListener('keydown', (e) => {
-    const key = e.key;
-    if (key >= '0' && key <= '9') inputNumber(key);
-    else if (key === '.') inputNumber('.');
-    else if (key === '+') inputOperator('add');
-    else if (key === '-') inputOperator('subtract');
-    else if (key === '*') inputOperator('multiply');
-    else if (key === '/') { e.preventDefault(); inputOperator('divide'); }
-    else if (key === 'Enter' || key === '=') calculate();
-    else if (key === 'Backspace') {
-      if (currentInput.length > 1) {
-        currentInput = currentInput.slice(0, -1);
-      } else {
-        currentInput = '0';
+        currentInput = String(parseFloat(result.toFixed(10)));
+        operator = null;
+        previousInput = "";
+        shouldResetInput = true;
+        expressionEl.textContent = "";
+        clearPercentBox();
+        updateDisplay();
       }
+
+      function reset() {
+        currentInput = "0";
+        previousInput = "";
+        operator = null;
+        shouldResetInput = false;
+        expressionEl.textContent = "";
+        clearPercentBox();
+        updateDisplay();
+      }
+
+      function negate() {
+        if (currentInput !== "0") {
+          currentInput = currentInput.startsWith("-")
+            ? currentInput.slice(1)
+            : "-" + currentInput;
+          updateDisplay();
+        }
+      }
+
+      function percent() {
+        const num = parseFloat(currentInput);
+        if (isNaN(num)) return;
+
+        if (operator && previousInput) {
+          const base = parseFloat(previousInput);
+          const pctValue = (base * num) / 100;
+          const sym = opSymbol[operator];
+          showPercentBox(
+            `${previousInput} ${sym} ${num}%`,
+            `${num}% of ${previousInput} = ${parseFloat(pctValue.toFixed(10))}`,
+            `${previousInput} ${sym} ${parseFloat(pctValue.toFixed(10))}`,
+          );
+          currentInput = String(pctValue);
+          shouldResetInput = true;
+        } else {
+          clearPercentBox();
+          currentInput = String(num / 100);
+        }
+        updateDisplay();
+      }
+
+      function handleButtonClick(e) {
+        const btn = e.currentTarget;
+        const value = btn.dataset.value;
+        const action = btn.dataset.action;
+
+        // Sparkle effect
+        const rect = btn.getBoundingClientRect();
+        const x =
+          (((e.clientX ||
+            e.touches?.[0]?.clientX ||
+            rect.left + rect.width / 2) -
+            rect.left) /
+            rect.width) *
+          100;
+        const y =
+          (((e.clientY ||
+            e.touches?.[0]?.clientY ||
+            rect.top + rect.height / 2) -
+            rect.top) /
+            rect.height) *
+          100;
+        btn.style.setProperty("--x", x + "%");
+        btn.style.setProperty("--y", y + "%");
+
+        if (value) {
+          inputNumber(value);
+        } else if (action === "clear") {
+          reset();
+        } else if (action === "negate") {
+          negate();
+        } else if (action === "percent") {
+          percent();
+        } else if (action === "calculate") {
+          calculate();
+        } else if (action) {
+          inputOperator(action);
+        }
+      }
+
+      // Keyboard support
+      document.addEventListener("keydown", (e) => {
+        const tag = document.activeElement?.tagName || "";
+        const isInput = tag === "INPUT" || tag === "TEXTAREA";
+        if (isInput) return;
+
+        const key = e.key;
+        if (key >= "0" && key <= "9") inputNumber(key);
+        else if (key === ".") inputNumber(".");
+        else if (key === "+") inputOperator("add");
+        else if (key === "-") inputOperator("subtract");
+        else if (key === "*") inputOperator("multiply");
+        else if (key === "/") {
+          e.preventDefault();
+          inputOperator("divide");
+        } else if (key === "Enter" || key === "=") calculate();
+        else if (key === "Backspace") {
+          if (currentInput.length > 1) {
+            currentInput = currentInput.slice(0, -1);
+          } else {
+            currentInput = "0";
+          }
+          updateDisplay();
+        } else if (key === "Escape") reset();
+      });
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", handleButtonClick);
+        btn.addEventListener(
+          "touchstart",
+          (e) => {
+            const rect = btn.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = ((touch.clientX - rect.left) / rect.width) * 100;
+            const y = ((touch.clientY - rect.top) / rect.height) * 100;
+            btn.style.setProperty("--x", x + "%");
+            btn.style.setProperty("--y", y + "%");
+          },
+          { passive: true },
+        );
+      });
+
+      clearPercentBox();
       updateDisplay();
-    }
-    else if (key === 'Escape') reset();
-  });
-
-  buttons.forEach(btn => {
-    btn.addEventListener('click', handleButtonClick);
-    btn.addEventListener('touchstart', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const touch = e.touches[0];
-      const x = ((touch.clientX - rect.left) / rect.width) * 100;
-      const y = ((touch.clientY - rect.top) / rect.height) * 100;
-      btn.style.setProperty('--x', x + '%');
-      btn.style.setProperty('--y', y + '%');
-    }, { passive: true });
-  });
-
-  updateDisplay();
-</script>
-</body>
+    </script>
+  </body>
 </html>
