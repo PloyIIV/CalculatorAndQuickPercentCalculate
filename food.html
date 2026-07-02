@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Menu</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #fff5f0 0%, #ffebe6 100%);
+        min-height: 100vh;
+      }
+
+      header {
+        background: linear-gradient(
+          135deg,
+          #e85d04 0%,
+          #dc2f02 50%,
+          #9d0208 100%
+        );
+        color: white;
+        text-align: center;
+        padding: 2rem 1rem;
+        box-shadow: 0 4px 20px rgba(220, 47, 2, 0.3);
+      }
+
+      header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+      }
+
+      header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .food-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 24px rgba(220, 47, 2, 0.1);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .food-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 36px rgba(220, 47, 2, 0.2);
+      }
+
+      .food-card .img-wrapper {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+      }
+
+      .food-card .img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .food-card:hover .img-wrapper img {
+        transform: scale(1.08);
+      }
+
+      .food-card .info {
+        padding: 1.2rem 1.2rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .food-card .info .name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #370617;
+      }
+
+      .food-card .info .price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #dc2f02;
+        background: #fff5f0;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+      }
+
+      .order-btn {
+        display: block;
+        width: calc(100% - 2.4rem);
+        margin: 0 auto 1.2rem;
+        padding: 0.7rem;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #f48c06, #dc2f02);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .order-btn:hover {
+        opacity: 0.85;
+      }
+
+      .cart-section {
+        margin-top: 3rem;
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 6px 24px rgba(220, 47, 2, 0.1);
+      }
+
+      .cart-section h2 {
+        color: #dc2f02;
+        margin-bottom: 0.5rem;
+      }
+
+      .cart-section #cart-list {
+        list-style: none;
+        min-height: 2rem;
+      }
+
+      .cart-section #cart-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #ffddd3;
+        display: flex;
+        justify-content: space-between;
+        color: #370617;
+      }
+
+      .cart-section #cart-total {
+        margin-top: 1rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #dc2f02;
+        text-align: right;
+      }
+
+      .empty-cart {
+        color: #aaa;
+        font-style: italic;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        color: #dc2f02;
+        text-align: center;
+        margin: 3rem 0 1.5rem;
+        position: relative;
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #f48c06, #dc2f02);
+        margin: 0.5rem auto 0;
+        border-radius: 2px;
+      }
+
+      .staff-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .staff-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 24px rgba(220, 47, 2, 0.1);
+        text-align: center;
+        padding-bottom: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .staff-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .staff-card .staff-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 1.5rem auto 0.8rem;
+        border: 4px solid #ffddd3;
+        transition: border-color 0.3s;
+      }
+
+      .staff-card:hover .staff-img {
+        border-color: #dc2f02;
+      }
+
+      .staff-card .staff-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #370617;
+      }
+
+      .staff-card .staff-role {
+        font-size: 0.9rem;
+        color: #dc2f02;
+        font-weight: 500;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        color: #9d0208;
+        opacity: 0.6;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🔥 Flavor Town</h1>
+      <p>Order your favorite comfort food</p>
+    </header>
+
+    <div class="container">
+      <div class="menu-grid" id="menu-grid"></div>
+
+      <h2 class="section-title">Meet Our Team</h2>
+      <div class="staff-grid" id="staff-grid"></div>
+
+      <div class="cart-section">
+        <h2>🛒 Your Order</h2>
+        <ul id="cart-list">
+          <li class="empty-cart">Your cart is empty</li>
+        </ul>
+        <div id="cart-total">Total: $0</div>
+      </div>
+    </div>
+
+    <footer>&copy; 2026 Flavor Town</footer>
+
+    <script src="myArray.js"></script>
+    <script>
+      const menuGrid = document.getElementById("menu-grid");
+      const cartList = document.getElementById("cart-list");
+      const cartTotal = document.getElementById("cart-total");
+      let cart = [];
+
+      function renderMenu() {
+        menuGrid.innerHTML = foodDTB
+          .map(
+            (item) => `
+        <div class="food-card">
+          <div class="img-wrapper">
+            <img src="${item.img}" alt="${item.name}" loading="lazy">
+          </div>
+          <div class="info">
+            <span class="name">${item.name}</span>
+            <span class="price">$${item.price}</span>
+          </div>
+          <button class="order-btn" data-id="${item.id}">Add to Cart</button>
+        </div>
+      `,
+          )
+          .join("");
+
+        menuGrid.querySelectorAll(".order-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = Number(btn.dataset.id);
+            const item = foodDTB.find((f) => f.id === id);
+            cart.push(item);
+            renderCart();
+          });
+        });
+      }
+
+      function renderCart() {
+        if (cart.length === 0) {
+          cartList.innerHTML = '<li class="empty-cart">Your cart is empty</li>';
+          cartTotal.textContent = "Total: $0";
+          return;
+        }
+
+        const grouped = {};
+        cart.forEach((item) => {
+          grouped[item.id] = grouped[item.id] || { ...item, qty: 0 };
+          grouped[item.id].qty++;
+        });
+
+        cartList.innerHTML = Object.values(grouped)
+          .map(
+            (g) => `
+        <li>
+          <span>${g.name} x${g.qty}</span>
+          <span>$${g.price * g.qty}</span>
+        </li>
+      `,
+          )
+          .join("");
+
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        cartTotal.textContent = `Total: $${total}`;
+      }
+
+      const staff = [
+        {
+          id: 1,
+          name: "Marco Rossi",
+          role: "Head Chef",
+          img: "https://i.pravatar.cc/200?u=marco",
+        },
+        {
+          id: 2,
+          name: "Sofia Chen",
+          role: "Sous Chef",
+          img: "https://i.pravatar.cc/200?u=sofia",
+        },
+        {
+          id: 3,
+          name: "James Park",
+          role: "Pastry Chef",
+          img: "https://i.pravatar.cc/200?u=james",
+        },
+        {
+          id: 4,
+          name: "Emma Lopez",
+          role: "Server",
+          img: "https://i.pravatar.cc/200?u=emma",
+        },
+      ];
+
+      function renderStaff() {
+        const grid = document.getElementById("staff-grid");
+        grid.innerHTML = staffMembers
+          .map(
+            (m) => `
+        <div class="staff-card">
+          <img class="staff-img" src="${m.img}" alt="${m.name}" loading="lazy">
+          <div class="staff-name">${m.name}</div>
+          <div class="staff-role">${m.role}</div>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      renderMenu();
+      renderStaff();
+    </script>
+  </body>
+</html>
